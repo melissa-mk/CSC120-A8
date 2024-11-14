@@ -2,9 +2,13 @@ import java.util.Scanner;
 import java.util.Stack;
 
 public class Birdie implements Contract {
+    String[] directions={"forward", "backward", "left", "right"};
+    String[] oppositeDirections={"backward", "forward", "right", "left"};
+
     String name;
     int health=10; // indicates the bird's health status based on meals, exertion, or rest
-    Stack<Object> history=new Stack<>(); // keeps track of the Birdie's action to facilitate the action reversal
+    Stack<String> history=new Stack<>(); // keeps track of the Birdie's action to facilitate the action reversal
+
     /**
      * constructor that adds the bird's name
      * @param name of the bird object
@@ -24,6 +28,20 @@ public class Birdie implements Contract {
      */
     public void setName(String name){
         this.name=name;
+    }
+
+    /**
+     * method assigns each direction with its reverse
+     * @param direction the user wants to move the bird in
+     * @return the reverse of the input direction
+     */
+    public String getReverse(String direction){
+        for(int i=0; i<directions.length; i++){
+            if(directions[i].equals(direction)){
+                return oppositeDirections[i];
+            }
+        }
+        return null;
     }
 
     /**
@@ -66,19 +84,37 @@ public class Birdie implements Contract {
     }
 
     /**
+     * validates user input on the direction field
+     * @param direction the user wants to move the bird in
+     * @return true if the direction is among the predefined set, false otherwise
+     */
+    public boolean isValidDirection(String direction){
+        for (int i = 0; i < directions.length; i++) {
+            if(direction.equals(directions[i])){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * @param direction, forward/backward/left/right
      * @return true if the bird can walk, false if the bird is out of health/energy
      */
     @Override
     public boolean walk(String direction) {
-        if(health>0){
-            System.out.println("Walking in the " + direction);
-            shrink();
-            history.push("Walked in the " + direction);
-            return true;
+        if(isValidDirection(direction)) {
+            if (health > 0) {
+                System.out.println("Walking " + direction);
+                health--;
+                history.push("Abouta walk " + getReverse(direction));
+                return true;
+            } else {
+                System.out.println("You don't have enough energy to walk! Take a meal first");
+                return false;
+            }
         }else {
-            System.out.println("You don't have enough energy to walk! Take a meal first");
-            return false;
+            throw new RuntimeException("Please use one of the valid directions.");
         }
     }
 
@@ -103,7 +139,6 @@ public class Birdie implements Contract {
      */
     @Override
     public Number shrink() {
-        System.out.println("I'm tireddd!!!");
         if(!fly(0,0)) {
             history.push("I just lost 2 energy bars!");
             return health-=2;
@@ -140,27 +175,42 @@ public class Birdie implements Contract {
      */
     @Override
     public void undo() {
-        do {
-            if(history.pop()=="Grabbed an item.") {
-
-            } else if (history.pop()=="Dropped an item.") {
-
-            } else if (history.pop()=="Using this item.") {
-
-            } else if (history.pop()=="Walked in a direction.") {
-
-            } else if (history.pop()=="I'm FLYINGGG!!!") {
-
-            } else if (history.pop()=="I just lost 2 energy bars!") {
-
-            } else if (history.pop()=="I just lost 1 energy bar") {
-
-            }else if (history.pop()=="I just had a meal!") {
-
-            }else if (history.pop()=="Just regained 1 energy bar after I rested!"){
-
+        try {
+            if(!history.empty()) {
+                String lastAction = history.pop();
+                if (lastAction.equals( "Grabbed an item.")) {
+                    System.out.print(" Never mind, I just dropped the item.");
+                } else if (lastAction.equals( "Dropped an item.")) {
+                    System.out.print(" Whew! I just picked up the item.");
+                } else if (lastAction.equals( "Using this item.")) {
+                    System.out.print(" I'm not using the item anymore.");
+                } else if (lastAction.startsWith("Abouta walk ")) {
+                    switch (lastAction) {
+                        case "Abouta walk forward" -> System.out.println("Moving forward");
+                        case "Abouta walk backward" -> System.out.println("Moving backward");
+                        case "Abouta walk left" -> System.out.println("To the left, to the left");
+                        case "Abouta walk right" -> System.out.println("To the right, to the right");
+                    }
+                } else if (lastAction.equals( "I'm FLYINGGG!!!")) {
+                    fly(0, 0);
+                    System.out.print(" I'm feeling a bit queasy, so I'm not flying anymore.");
+                } else if (lastAction.equals( "I just lost 2 energy bars!")) {
+                    health += 2;
+                    System.out.print(" I'm feeling better, so I can fly again.");
+                } else if (lastAction.equals( "I just lost 1 energy bar")) {
+                    health++;
+                    System.out.print(" I'm feeling just a bit better.");
+                } else if (lastAction.equals( "I just had a meal!")) {
+                    System.out.print(" Not a good meal...falling sick.");
+                    health -= 2;
+                } else if (lastAction.equals( "Just regained 1 energy bar after I rested!")) {
+                    System.out.print(" Never mind, I actually need a nap.");
+                    health--;
+                }
             }
-        }while(!history.isEmpty());
+        }catch(RuntimeException e){
+            System.out.println("Your stack might be empty!");
+        }
     }
 
     /**
@@ -177,6 +227,16 @@ public class Birdie implements Contract {
         Scanner sc = new Scanner(System.in);
         birdie.setName(sc.nextLine());
         birdie.showOptions();
+        birdie.walk("forward");
+        birdie.undo();
+        birdie.walk("left");
+        birdie.undo();
+        birdie.walk("right");
+        birdie.undo();
+        birdie.walk("backward");
+        birdie.undo();
+
+        birdie.grow();
+        System.out.println(birdie.health);
     }
 }
-

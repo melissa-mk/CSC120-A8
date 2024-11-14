@@ -9,13 +9,13 @@ Listed below are various aspects of the assignment.  When you turn in your work,
 
 ## Assignment Points:
 
-_____ 10 pts: The class meaningfully implements each of the methods in described in the `Contract` interface:
+_PART_ 10 pts: The class meaningfully implements each of the methods in described in the `Contract` interface:
 
       _YES_ `void grab(String item);`
       _YES_ `String drop(String item);`
       _YES_ `void examine(String item);`
       _YES_ `void use(String item);`
-      _____ `boolean walk(String direction);`
+      _YES_ `boolean walk(String direction);`
       _YES_ `boolean fly(int x, int y);`
       _YES_ `Number shrink();`
       _YES_ `Number grow();`

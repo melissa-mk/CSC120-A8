@@ -1,7 +1,7 @@
 Use this file to record your reflection on this assignment.
 
 - Tell me about your class! What does it represent?
-  - My class represents a bird that can fly, walk, grab, observe, and drop an object. The birdie can also
+  - My class represents a bird that can implement all methods from Contract; shrink() represents a health deterioration while grow() represents a health improvement.
 - What additional methods (if any) did you implement alongside those listed in the interface?
   - showOptions(), setName(string), Birdie(string).
 - What worked, what didn't, what advice would you give someone taking this course in the future?

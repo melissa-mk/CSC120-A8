@@ -98,7 +98,9 @@ public class Birdie implements Contract {
     }
 
     /**
-     * @param direction, forward/backward/left/right
+     * @param direction
+     * the direction can only be forward/backward/left/right
+     *
      * @return true if the bird can walk, false if the bird is out of health/energy
      */
     @Override
